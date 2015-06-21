@@ -15,6 +15,11 @@ for (name in names(meteoData)) {
   count <- count+1
 }
 
+# Cast temperature column
+dbGetQuery(con, "UPDATE fr_synop_data SET t = NULL WHERE t = 'mq';");
+dbGetQuery(con, "ALTER TABLE fr_synop_data ALTER COLUMN t TYPE numeric(10,0) USING t::numeric;");
+
+
 table <- "fr_synop_stations"
 
 dbWriteTable(con,table, synopStations,row.names=FALSE,overwrite=TRUE)

@@ -47,16 +47,16 @@ for (name in names(meteoData)) {
   meteoData[[name]]$date_string <- as.character(meteoData[[name]]$date_string)
   
   #Year
-  meteoData[[name]]$year <- substr(meteoData[[name]]$date_string, 1, 4)
+  meteoData[[name]]$year <- as.numeric(substr(meteoData[[name]]$date_string, 1, 4))
   
   #Month
-  meteoData[[name]]$month <- substr(meteoData[[name]]$date_string, 5, 6)
+  meteoData[[name]]$month <- as.numeric(substr(meteoData[[name]]$date_string, 5, 6))
   
   #Day
-  meteoData[[name]]$day <- substr(meteoData[[name]]$date_string, 7, 8)
+  meteoData[[name]]$day <- as.numeric(substr(meteoData[[name]]$date_string, 7, 8))
   
   #Hour
-  meteoData[[name]]$hour <- substr(meteoData[[name]]$date_string, 9, 10)
+  meteoData[[name]]$hour <- as.numeric(substr(meteoData[[name]]$date_string, 9, 10))
 
 }
 
