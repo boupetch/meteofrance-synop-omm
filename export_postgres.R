@@ -24,7 +24,7 @@ table <- "fr_synop_stations"
 
 dbWriteTable(con,table, synopStations,row.names=FALSE,overwrite=TRUE)
 
-#Commenting that shit https://donneespubliques.meteofrance.fr/client/document/doc_parametres_synop_168.pdf
+#Commenting https://donneespubliques.meteofrance.fr/client/document/doc_parametres_synop_168.pdf
 #TODO
 dbGetQuery(con, "COMMENT ON COLUMN fr_synop_data.numer_sta IS 'SYNOP station number';");
 dbGetQuery(con, "COMMENT ON COLUMN fr_synop_data.date IS 'UTC date AAAAMMDDHHMISS';");
