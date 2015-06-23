@@ -31,10 +31,43 @@ get_nearest_station(2.327728,48.857487)
 get_nearest_station(1.081467,49.434645)
 
 ## Get the average temperature in Celsius for a station and day during daytime
-dbGetQuery(con,"SELECT year,month,day,AVG(t)-273.15 as t
+d2014 <- dbGetQuery(con,"SELECT year,month,day,AVG(t)-273.15 as t,
+                year*10000+month*100+day as date
                 FROM fr_synop_data 
                 WHERE numer_sta = 7149
-                AND year = 2015 AND month = 06 
+                AND year = 2014 
                 AND hour BETWEEN 9 AND 18
                 GROUP BY year,month,day
                 ORDER BY day")
+
+d2014 <- dbGetQuery(con,"SELECT numer_sta as station,month,day,AVG(t)-273.15 as t
+                FROM fr_synop_data
+                WHERE numer_sta = 89642
+                AND year = 2014 
+                AND hour BETWEEN 9 AND 18
+                GROUP BY numer_sta,year,month,day
+                ORDER BY day")
+
+avgTemp2014 <- dbGetQuery(con,"SELECT s.\"Nom\" as station,month,day,AVG(t)-273.15 as Temperature
+FROM fr_synop_data d
+JOIN fr_synop_stations s ON d.numer_sta = s.\"ID\"
+WHERE year = 2014
+GROUP BY  s.\"Nom\",year,month,day")
+
+
+library("ggplot2")
+
+
+jpeg("PP_plot.jpg",3000,2500,res=200)
+p <- ggplot(data=avgTemp2014, aes(x=month, y=reorder(day,-day), fill=temperature))
+p <- p + geom_tile()
+p <- p + scale_fill_gradientn(colours = rev(c('#F21A00','#E1AF00','#EBCC2A','#78B7C5','#3B9AB2','#006E89','#004B5D','#002129'))) 
+p <- p + scale_x_discrete(expand = c(0,0),limits = unique(avgTemp2014$month))
+p <- p + xlab("Month")
+p <- p + ylab("Days")
+p <- p + ggtitle("Climates in France")
+p <- p + facet_wrap(~station,nrow = 10, ncol = 6)
+p <- p + theme(axis.text.y = element_text(size=3),
+               plot.title=element_text(family="Helvetica", face="bold", size=30))
+p
+dev.off()
