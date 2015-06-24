@@ -48,15 +48,15 @@ d2014 <- dbGetQuery(con,"SELECT numer_sta as station,month,day,AVG(t)-273.15 as 
                 GROUP BY numer_sta,year,month,day
                 ORDER BY day")
 
+
+library("ggplot2")
+
+#Temperatures moyennes
 avgTemp2014 <- dbGetQuery(con,"SELECT s.\"Nom\" as station,month,day,AVG(t)-273.15 as Temperature
 FROM fr_synop_data d
 JOIN fr_synop_stations s ON d.numer_sta = s.\"ID\"
 WHERE year = 2014
 GROUP BY  s.\"Nom\",year,month,day")
-
-
-library("ggplot2")
-
 
 jpeg("PP_plot.jpg",3000,2500,res=200)
 p <- ggplot(data=avgTemp2014, aes(x=month, y=reorder(day,-day), fill=temperature))
@@ -67,6 +67,29 @@ p <- p + xlab("Month")
 p <- p + ylab("Days")
 p <- p + ggtitle("Climates in France")
 p <- p + facet_wrap(~station,nrow = 10, ncol = 6)
+p <- p + theme(axis.text.y = element_text(size=3),
+               plot.title=element_text(family="Helvetica", face="bold", size=30))
+p
+dev.off()
+
+#Somme des précipitations par mois et par an 
+sumPrec2014 <- dbGetQuery(con,"SELECT AVG(precipitation) as precipitation,AVG(temperature) as temperature,month,station FROM
+(SELECT s.\"Nom\" as station,month,SUM(rr3) as precipitation,year,AVG(t)-273.15 as Temperature
+FROM fr_synop_data d
+JOIN fr_synop_stations s ON d.numer_sta = s.\"ID\"
+GROUP BY  s.\"Nom\",month,year) s
+GROUP BY month,station")
+
+jpeg("PP_plot2.jpg",3000,2500,res=200)
+p <- ggplot(data=sumPrec2014, aes(x=month, y=precipitation))
+p <- p + geom_line()
+p <- p + geom_bar(data=sumPrec2014, aes(x=month, y=temperature))
+p <- p + scale_x_discrete(expand = c(0,0),limits = unique(sumPrec2014$month))
+p <- p + xlab("Month")
+p <- p + ylab("Days")
+p <- p + ggtitle("Climates in France")
+p <- p + facet_wrap(~station,nrow = 11, ncol = 6
+                    )
 p <- p + theme(axis.text.y = element_text(size=3),
                plot.title=element_text(family="Helvetica", face="bold", size=30))
 p

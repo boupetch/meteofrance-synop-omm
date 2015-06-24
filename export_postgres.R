@@ -19,6 +19,9 @@ for (name in names(meteoData)) {
 dbGetQuery(con, "UPDATE fr_synop_data SET t = NULL WHERE t = 'mq';");
 dbGetQuery(con, "ALTER TABLE fr_synop_data ALTER COLUMN t TYPE numeric(10,0) USING t::numeric;");
 
+# Cast 3 hours precipitations column
+dbGetQuery(con, "UPDATE fr_synop_data SET rr3 = NULL WHERE rr3 = 'mq';");
+dbGetQuery(con, "ALTER TABLE fr_synop_data ALTER COLUMN rr3 TYPE numeric(10,0) USING rr3::numeric;");
 
 table <- "fr_synop_stations"
 
