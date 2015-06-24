@@ -58,7 +58,7 @@ JOIN fr_synop_stations s ON d.numer_sta = s.\"ID\"
 WHERE year = 2014
 GROUP BY  s.\"Nom\",year,month,day")
 
-jpeg("PP_plot.jpg",3000,2500,res=200)
+jpeg("temp.jpg",3000,2500,res=200)
 p <- ggplot(data=avgTemp2014, aes(x=month, y=reorder(day,-day), fill=temperature))
 p <- p + geom_tile()
 p <- p + scale_fill_gradientn(colours = rev(c('#F21A00','#E1AF00','#EBCC2A','#78B7C5','#3B9AB2','#006E89','#004B5D','#002129'))) 
@@ -72,7 +72,7 @@ p <- p + theme(axis.text.y = element_text(size=3),
 p
 dev.off()
 
-#Somme des précipitations par mois et par an 
+#Précipitations et températures par mois et par an 
 sumPrec2014 <- dbGetQuery(con,"SELECT AVG(precipitation) as precipitation,AVG(temperature) as temperature,month,station FROM
 (SELECT s.\"Nom\" as station,month,SUM(rr3) as precipitation,year,AVG(t)-273.15 as Temperature
 FROM fr_synop_data d
@@ -80,7 +80,7 @@ JOIN fr_synop_stations s ON d.numer_sta = s.\"ID\"
 GROUP BY  s.\"Nom\",month,year) s
 GROUP BY month,station")
 
-jpeg("PP_plot2.jpg",3000,2500,res=200)
+jpeg("precipitations.jpg",3000,2500,res=200)
 p <- ggplot(data=sumPrec2014, aes(x=month, y=precipitation))
 p <- p + geom_line()
 p <- p + geom_bar(data=sumPrec2014, aes(x=month, y=temperature))
