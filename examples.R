@@ -56,19 +56,19 @@ avgTemp2014 <- dbGetQuery(con,"SELECT s.\"Nom\" as station,month,day,AVG(t)-273.
 FROM fr_synop_data d
 JOIN fr_synop_stations s ON d.numer_sta = s.\"ID\"
 WHERE year = 2014
-GROUP BY  s.\"Nom\",year,month,day")
+GROUP BY  s.\"Nom\",month,day")
 
 jpeg("temp.jpg",3000,2500,res=200)
 p <- ggplot(data=avgTemp2014, aes(x=month, y=reorder(day,-day), fill=temperature))
 p <- p + geom_tile()
-p <- p + scale_fill_gradientn(colours = rev(c('#F21A00','#E1AF00','#EBCC2A','#78B7C5','#3B9AB2','#006E89','#004B5D','#002129'))) 
+p <- p + scale_fill_gradientn(colours = rev(c('#F21A00','#E1AF00','#EBCC2A','#78B7C5','#3B9AB2','#006E89','#004B5D','#002129','#002129'))) 
 p <- p + scale_x_discrete(expand = c(0,0),limits = unique(avgTemp2014$month))
 p <- p + xlab("Month")
 p <- p + ylab("Days")
-p <- p + ggtitle("Climates in France")
+p <- p + ggtitle("2014 Temperatures in France")
 p <- p + facet_wrap(~station,nrow = 10, ncol = 6)
 p <- p + theme(axis.text.y = element_text(size=3),
-               plot.title=element_text(family="Helvetica", face="bold", size=30))
+               plot.title=element_text(family="Helvetica", face="bold", size=30,vjust=2))
 p
 dev.off()
 
